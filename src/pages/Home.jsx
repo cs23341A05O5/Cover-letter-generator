@@ -122,8 +122,10 @@ Format the output strictly as a JSON object with the following structure. Do not
                 console.log('Generated Groq Data: ', generatedText);
                 
                 let cleanJson = generatedText;
-                if (cleanJson.startsWith('```')) {
-                    cleanJson = cleanJson.replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+                const firstOpenBrace = cleanJson.indexOf('{');
+                const lastCloseBrace = cleanJson.lastIndexOf('}');
+                if (firstOpenBrace !== -1 && lastCloseBrace !== -1 && lastCloseBrace > firstOpenBrace) {
+                    cleanJson = cleanJson.substring(firstOpenBrace, lastCloseBrace + 1);
                 }
                 
                 try {

@@ -157,8 +157,10 @@ ${rawText}
         
         // Clean markdown tags if the model still outputs them
         let cleanJson = contentText;
-        if (cleanJson.startsWith('```')) {
-          cleanJson = cleanJson.replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+        const firstOpenBrace = cleanJson.indexOf('{');
+        const lastCloseBrace = cleanJson.lastIndexOf('}');
+        if (firstOpenBrace !== -1 && lastCloseBrace !== -1 && lastCloseBrace > firstOpenBrace) {
+          cleanJson = cleanJson.substring(firstOpenBrace, lastCloseBrace + 1);
         }
         
         try {
