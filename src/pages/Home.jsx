@@ -84,6 +84,12 @@ Format the output strictly as a JSON object with the following structure. Do not
   ]
 }
 `;
+        if (!import.meta.env.VITE_GROQ_API_KEY) {
+            setErrorMessage('VITE_GROQ_API_KEY is not defined. Please add VITE_GROQ_API_KEY to your environment variables (.env file or deployment dashboard) and restart your development server.');
+            setIsLoading(false);
+            return;
+        }
+
         const url = 'https://api.groq.com/openai/v1/chat/completions';
         const options = {
             method: 'POST',
@@ -92,13 +98,14 @@ Format the output strictly as a JSON object with the following structure. Do not
                 'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'llama-3.1-8b-instant',
+                model: 'llama-3.3-70b-versatile',
                 messages: [
                     {
                         role: 'user',
                         content: prompt
                     }
                 ],
+                response_format: { type: "json_object" },
                 max_tokens: 2500,
                 temperature: 0.3
             })
@@ -133,6 +140,7 @@ Format the output strictly as a JSON object with the following structure. Do not
                     setParsedData(parsed);
                 } catch (jsonErr) {
                     console.error('Failed to parse JSON response:', jsonErr);
+                    console.error('Clean JSON string was:', cleanJson);
                     setErrorMessage('Failed to parse the structured AI response. Please try generating again.');
                 }
             } else {
